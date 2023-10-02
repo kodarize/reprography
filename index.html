@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="printer.svg">
+    <title>Printing Cost Calculator</title>
+    <style>
+        body {
+            background-color: #F5EDE3; /* Sepia background color */
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            color: #8B4513; /* Brown color for the header */
+        }
+
+        #calculator {
+            background-color: #FFF5E1; /* Light sepia background for the calculator */
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+            display: inline-block;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="number"] {
+            width: 80px;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        #source-links {
+            margin-top: 20px;
+        }
+
+        #source-links a {
+            color: #8B4513; /* Brown color for the links */
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        #source-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Printing Cost Calculator</h1>
+    <div id="calculator">
+        <form id="printingForm">
+            <label for="pages">Number of Pages to Print Monthly:</label>
+            <input type="number" id="pages" name="pages" required>
+        </form>
+
+        <div id="result"></div>
+    </div>
+
+    <div id="source-links">
+        Sources:
+        <a href="https://www.hp.com/us-en/shop/cv/instantink" target="_blank">HP Instant Ink</a>,
+        <a href="https://www.cnet.com/tech/computing/printer-buying-guide/" target="_blank">CNET Printer Buying Guide</a>,
+        <a href="https://www.michigancomputersupplies.com/learnmore/printer-repair-ann-arbor-inkjet" target="_blank">Michigan Computer Supplies</a>,
+        <a href="https://iotecdigital.com/blog/the-average-cost-of-paper/" target="_blank">The Average Cost of Paper</a>,
+        <a href="https://www.peripageglobal.com/products/peripage-a40-thermal-paper-10-years-image-time" target="_blank">Thermal Paper Price</a>
+    </div>
+
+    <script>
+        function calculateCost() {
+            const pages = parseFloat(document.getElementById('pages').value);
+
+            if (isNaN(pages) || pages <= 0) {
+                document.getElementById('result').innerHTML = '<p>Please enter a valid number of pages.</p>';
+                return;
+            }
+
+            const blackAndWhiteCost = pages * 0.20;
+            const colorCost = pages * 1.00;
+            const thermalPaperCost = Math.ceil(pages / 100) * 14.90;
+
+            // HP Instant Ink Subscription Prices
+            const inkjetPrices = {
+                '10': 0.99,
+                '50': 3.99,
+                '100': 5.99,
+                '300': 11.99,
+                '700': 24.99
+            };
+
+            const laserPrices = {
+                '50': 1.99,
+                '100': 3.99,
+                '200': 7.99,
+                '400': 13.99,
+                '800': 19.99
+            };
+
+            // Cost of paper ($0.10 per page)
+            const paperCost = pages * 0.10;
+
+            let inkjetCost = 0;
+            let laserCost = 0;
+            let inkjetText = '';
+            let laserText = '';
+
+            for (const limit in inkjetPrices) {
+                if (pages <= parseInt(limit)) {
+                    inkjetCost = inkjetPrices[limit];
+                    inkjetText = `$` + (inkjetCost + paperCost).toFixed(2);
+                    break;
+                } else {
+                    inkjetText = "That's a lot of paper! 🌳";
+                }
+            }
+
+            for (const limit in laserPrices) {
+                if (pages <= parseInt(limit)) {
+                    laserCost = laserPrices[limit];
+                    laserText = `$` + (laserCost + paperCost).toFixed(2);
+                    break;
+                } else {
+                    laserText = "That's a lot of paper! 🌳";
+                }
+            }
+
+            const result = `
+                <p>Black and White Printing (Staples): $${blackAndWhiteCost.toFixed(2)}</p>
+                <p>Color Printing (Staples): $${colorCost.toFixed(2)}</p>
+                <p>Thermal Paper Printing: $${thermalPaperCost.toFixed(2)}</p>
+                <p>Inkjet Printing (HP Instant Ink + Paper): ${inkjetText}</p>
+                <p>Laser Printing (HP Instant Ink + Paper): ${laserText}</p>
+            `;
+
+            document.getElementById('result').innerHTML = result;
+        }
+
+        document.getElementById('pages').addEventListener('input', calculateCost);
+        // Automatically calculate cost when the page loads
+        calculateCost();
+    </script>
+</body>
+</html>
